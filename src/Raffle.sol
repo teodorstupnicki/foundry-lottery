@@ -9,7 +9,7 @@ contract Raffle {
   }
 
   function enterRaffle() public {
-    
+    require(msg.value >= i_entranceFee, "Not enough ETH sent!");
   }
 
   function pickWinner() public {}
