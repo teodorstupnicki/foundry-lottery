@@ -2,6 +2,7 @@
 pragma solidity 0.8.19;
 
 import {VRFConsumerBaseV2Plus} from "@chainlink/contracts/src/v0.8/vrf/dev/VRFConsumerBaseV2Plus.sol";
+import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 
 contract Raffle is VRFConsumerBaseV2Plus {
   /* Errors */
@@ -34,19 +35,19 @@ contract Raffle is VRFConsumerBaseV2Plus {
     if ((block.timestamp - s_lastTimeStamp) > i_interval) {
       revert();
     }
-    // requestId = s_vrfCoordinator.requestRandomWords(
-    //   VRFV2PlusClient.RandomWordsRequest({
-    //     keyHash: s_keyHash,
-    //     subId: s_subscriptionId,
-    //     requestConfirmations: requestConfirmations,
-    //     callbackGasLimit: callbackGasLimit,
-    //     numWords: numWords,
-    //     extraArgs: VRFV2PlusClient._argsToBytes(
-    //       // Set nativePayment to true to pay for VRF requests with Sepolia ETH instead of LINK
-    //       VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
-    //     )
-    //   })
-    // );
+     requestId = s_vrfCoordinator.requestRandomWords(
+       VRFV2PlusClient.RandomWordsRequest({
+         keyHash: s_keyHash,
+         subId: s_subscriptionId,
+         requestConfirmations: requestConfirmations,
+         callbackGasLimit: callbackGasLimit,
+         numWords: numWords,
+         extraArgs: VRFV2PlusClient._argsToBytes(
+           // Set nativePayment to true to pay for VRF requests with Sepolia ETH instead of LINK
+           VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
+         )
+       })
+     );
   }
 
   function fulfillRandomWords(uint256 requestId, uint256[] calldata randomWords) internal override {}
