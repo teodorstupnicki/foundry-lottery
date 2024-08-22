@@ -35,7 +35,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     if ((block.timestamp - s_lastTimeStamp) > i_interval) {
       revert();
     }
-     requestId = s_vrfCoordinator.requestRandomWords(
+    uint256 requestId = s_vrfCoordinator.requestRandomWords(
        VRFV2PlusClient.RandomWordsRequest({
          keyHash: s_keyHash,
          subId: s_subscriptionId,
