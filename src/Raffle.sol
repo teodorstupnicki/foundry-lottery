@@ -8,6 +8,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
   /* Errors */
   error Raffle__SendMoreToEnterRaffle();
   error Raffle__TransferFailed();
+  error Raffle__RaffleNotOpen();
+
+  enum RaffleState {OPEN, CALCULATING}
 
   uint16 private constant REQUEST_CONFIRMATIONS = 3;
   uint16 private constant NUM_WORDS = 1;
@@ -19,6 +22,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
   address payable[] private s_players;
   address payable private s_recentWinner;
   uint256 private s_lastTimeStamp;
+  RaffleState private s_raffleState;
 
   /* Events */
   event RaffleEntered(address indexed player);
@@ -32,11 +36,15 @@ contract Raffle is VRFConsumerBaseV2Plus {
       i_keyHash = gasLane;
       i_subscriptionId = subscriptionId;
       i_callbackGasLimit = callbackGasLimit;
+      s_raffleState = RaffleState.OPEN;
     }
 
   function enterRaffle() public payable {
     if(msg.value < i_entranceFee) {
       revert Raffle__SendMoreToEnterRaffle();
+    }
+    if(s_raffleState != RaffleState.OPEN) {
+      revert Raffle__RaffleNotOpen();
     }
     s_players.push(payable(msg.sender));
     emit RaffleEntered(msg.sender);
