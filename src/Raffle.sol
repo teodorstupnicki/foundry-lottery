@@ -6,6 +6,7 @@ import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/V
 
 contract Raffle is VRFConsumerBaseV2Plus {
   /* Errors */
+  error Raffle__UpkeepNotNeeded(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
   error Raffle__SendMoreToEnterRaffle();
   error Raffle__TransferFailed();
   error Raffle__RaffleNotOpen();
@@ -64,7 +65,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
   function performUpkeep(bytes calldata /* performData */) external {
     (bool upkeepNeeded,) = checkUpKeep("");
     if (!upkeepNeeded) {
-      revert();
+      revert Raffle__UpkeepNotNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
     }
     s_raffleState = RaffleState.CALCULATING;
     VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient.RandomWordsRequest({
