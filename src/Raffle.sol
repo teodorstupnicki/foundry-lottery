@@ -51,7 +51,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     emit RaffleEntered(msg.sender);
   }
 
-  function checkUpKeep(bytes calldata /* checkData */) public view returns (bool upkeepNeeded, bytes memory /* performData */) 
+  function checkUpKeep(bytes memory /* checkData */) public view returns (bool upkeepNeeded, bytes memory /* performData */) 
   {
     bool timeHasPassed = ((block.timestamp - s_lastTimeStamp) >= i_interval);
     bool isOpen = s_raffleState == RaffleState.OPEN;
@@ -61,8 +61,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
     return (upkeepNeeded, "");
   }
 
-  function pickWinner() external {
-    if ((block.timestamp - s_lastTimeStamp) > i_interval) {
+  function performUpkeep(bytes calldata /* performData */) external {
+    (bool upkeepNeeded,) = checkUpKeep("");
+    if (!upkeepNeeded) {
       revert();
     }
     s_raffleState = RaffleState.CALCULATING;
