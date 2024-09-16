@@ -58,6 +58,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     bool hasBalance = address(this).balance > 0;
     bool hasPlayers = s_players.length > 0;
     upkeepNeeded = timeHasPassed && isOpen && hasBalance && hasPlayers;
+    return (upkeepNeeded, "");
   }
 
   function pickWinner() external {
