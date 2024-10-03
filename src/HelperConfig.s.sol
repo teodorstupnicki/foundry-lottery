@@ -2,10 +2,15 @@
 pragma solidity 0.8.19;
 
 import {Script} from "forge-std/Script.sol";
+import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 
 abstract contract CodeConstants {
     uint256 public constant ETH_SEPOLIA_CHAIN_ID = 11155111;
     uint256 public constant LOCAL_CHAIN_ID = 31337;
+    uint96 public MOCK_BASE_FEE = 0.25 ether;
+    uint96 public MOCK_GAS_PRICE_LINK = 1e9;
+    // LINK / ETH price
+    int256 public MOCK_WEI_PER_UINT_LINK = 4e15;
 }
 
 contract HelperConfig is Script, CodeConstants {
@@ -53,5 +58,20 @@ contract HelperConfig is Script, CodeConstants {
         if (localNetworkConfig.vrfCoordinatorV2_5 != address(0)) {
             return localNetworkConfig;
         }
+
+        vm.startBroadcast();
+        VRFCoordinatorV2_5Mock vrfCoordinatorV2_5Mock =
+            new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UINT_LINK);
+        vm.stopBroadcast();
+
+        localNetworkConfig = NetworkConfig({
+            subscriptionId: 0,
+            gasLane: 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c, // doesn't really matter
+            automationUpdateInterval: 30, // 30 seconds
+            raffleEntranceFee: 0.01 ether,
+            callbackGasLimit: 500000, // 500,000 gas
+            vrfCoordinatorV2_5: address(vrfCoordinatorV2_5Mock)
+        });
+        return localNetworkConfig;
     }
 }
