@@ -19,6 +19,8 @@ contract RaffleTest is Test {
 
     address public PLAYER = makeAddr("player");
     uint256 public constant STARTING_USER_BALANCE = 10 ether;
+    event RaffleEntered(address indexed player);
+    event WinnerPicked(address indexed winner);
 
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
