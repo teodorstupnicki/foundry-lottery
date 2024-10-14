@@ -30,6 +30,9 @@ contract RaffleTest is Test {
         raffleEntranceFee = config.raffleEntranceFee;
         callbackGasLimit = config.callbackGasLimit;
         vrfCoordinatorV2_5 = config.vrfCoordinatorV2_5;
+
+
+        vm.deal(PLAYER, STARTING_USER_BALANCE);
     }
 
   function testRaffleInitializesInOpenState() public view {
@@ -40,8 +43,18 @@ contract RaffleTest is Test {
     // arrange
     vm.prank(PLAYER);
     // act
+    // assert
     vm.expectRevert(Raffle.Raffle__SendMoreToEnterRaffle.selector);
     raffle.enterRaffle();
+  }
+
+  function testRaffleRecordsPlayersWhenTheyEnter() public {
+    //arrange
+    vm.prank(PLAYER);
+    // act
+    raffle.enterRaffle{value: raffleEntranceFee}();
     // assert
+    address playerRecord = raffle.getPlayer(0);
+    assert(playerRecord == PLAYER);
   }
 }
