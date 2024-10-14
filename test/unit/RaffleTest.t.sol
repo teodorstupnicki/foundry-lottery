@@ -31,4 +31,8 @@ contract RaffleTest is Test {
         callbackGasLimit = config.callbackGasLimit;
         vrfCoordinatorV2_5 = config.vrfCoordinatorV2_5;
     }
+
+  function testRaffleInitializesInOpenState() public view {
+    
+  }
 }
