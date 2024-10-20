@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.8.19;
 
 import {Script} from "forge-std/Script.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
+import {LinkToken} from "../test/mocks/LinkToken.sol";
 
 abstract contract CodeConstants {
     uint256 public constant ETH_SEPOLIA_CHAIN_ID = 11155111;
@@ -23,6 +24,7 @@ contract HelperConfig is Script, CodeConstants {
         uint256 raffleEntranceFee;
         uint32 callbackGasLimit;
         address vrfCoordinatorV2_5;
+        address link;
     }
 
     NetworkConfig public localNetworkConfig;
@@ -53,7 +55,8 @@ contract HelperConfig is Script, CodeConstants {
             automationUpdateInterval: 30, // 30 seconds
             raffleEntranceFee: 0.01 ether,
             callbackGasLimit: 500000, // 500,000 gas
-            vrfCoordinatorV2_5: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B
+            vrfCoordinatorV2_5: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
+            link: 0x779877A7B0D9E8603169DdbD7836e478b4624789
         });
     }
 
@@ -66,6 +69,7 @@ contract HelperConfig is Script, CodeConstants {
         vm.startBroadcast();
         VRFCoordinatorV2_5Mock vrfCoordinatorV2_5Mock =
             new VRFCoordinatorV2_5Mock(MOCK_BASE_FEE, MOCK_GAS_PRICE_LINK, MOCK_WEI_PER_UINT_LINK);
+        LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
 
         localNetworkConfig = NetworkConfig({
@@ -74,7 +78,8 @@ contract HelperConfig is Script, CodeConstants {
             automationUpdateInterval: 30, // 30 seconds
             raffleEntranceFee: 0.01 ether,
             callbackGasLimit: 500000, // 500,000 gas
-            vrfCoordinatorV2_5: address(vrfCoordinatorV2_5Mock)
+            vrfCoordinatorV2_5: address(vrfCoordinatorV2_5Mock),
+            link: address(linkToken)
         });
         return localNetworkConfig;
     }
