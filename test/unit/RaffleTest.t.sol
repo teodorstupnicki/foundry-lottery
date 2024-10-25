@@ -81,7 +81,7 @@ contract RaffleTest is Test {
 
   /*//////////////////////////////////////////////////////////////
                               CHECKUPKEEP
-    //////////////////////////////////////////////////////////////*/
+  //////////////////////////////////////////////////////////////*/
   
   function testCheckUpkeepReturnsFalseIfItHasNoBalance() public {
     // Arrange
@@ -93,5 +93,18 @@ contract RaffleTest is Test {
 
     // Assert
     assert(!upkeepNeeded);
+  }
+
+  /*//////////////////////////////////////////////////////////////
+                              PERFORMUPKEEP
+  //////////////////////////////////////////////////////////////*/
+
+  function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public {
+    vm.prank(PLAYER);
+    raffle.enterRaffle{value: raffleEntranceFee}();
+    vm.warp(block.timestamp + automationUpdateInterval + 1);
+    vm.roll(block.number + 1);
+    
+    raffle.performUpkeep("");
   }
 }
