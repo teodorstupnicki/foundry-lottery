@@ -12,6 +12,7 @@ abstract contract CodeConstants {
     uint96 public MOCK_GAS_PRICE_LINK = 1e9;
     // LINK / ETH price
     int256 public MOCK_WEI_PER_UINT_LINK = 4e15;
+    address public FOUNDRY_DEFAULT_SENDER = 0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38;
 }
 
 contract HelperConfig is Script, CodeConstants {
@@ -25,6 +26,7 @@ contract HelperConfig is Script, CodeConstants {
         uint32 callbackGasLimit;
         address vrfCoordinatorV2_5;
         address link;
+        address account;
     }
 
     NetworkConfig public localNetworkConfig;
@@ -56,7 +58,8 @@ contract HelperConfig is Script, CodeConstants {
             raffleEntranceFee: 0.01 ether,
             callbackGasLimit: 500000, // 500,000 gas
             vrfCoordinatorV2_5: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
-            link: 0x779877A7B0D9E8603169DdbD7836e478b4624789
+            link: 0x779877A7B0D9E8603169DdbD7836e478b4624789,
+            account: 0x0Ba27d2c5612cbF7876B33f267Cec66979c299Df
         });
     }
 
@@ -79,7 +82,8 @@ contract HelperConfig is Script, CodeConstants {
             raffleEntranceFee: 0.01 ether,
             callbackGasLimit: 500000, // 500,000 gas
             vrfCoordinatorV2_5: address(vrfCoordinatorV2_5Mock),
-            link: address(linkToken)
+            link: address(linkToken),
+            account: FOUNDRY_DEFAULT_SENDER
         });
         return localNetworkConfig;
     }
