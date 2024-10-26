@@ -154,12 +154,19 @@ contract RaffleTest is Test {
     _;
   }
 
-  function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEntered {
+  modifier skipFork() {
+    if (block.chainid != 31337) {
+        return;
+    }
+    _;
+  }
+
+  function testFulfillRandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEntered skipFork {
     vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
     VRFCoordinatorV2_5Mock(vrfCoordinatorV2_5).fulfillRandomWords(randomRequestId, address(raffle));
   }
 
-  function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered {
+  function testFulfillRandomWordsPicksAWinnerResetsAndSendsMoney() public raffleEntered skipFork {
     uint256 additionalEntrants = 3;
     uint256 startingIndex = 1;
     address expectedWinner = address(1);
