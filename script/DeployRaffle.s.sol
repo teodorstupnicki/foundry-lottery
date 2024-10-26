@@ -17,16 +17,16 @@ contract DeployRaffle is Script {
       // create subscription
       CreateSubscription createSubscription = new CreateSubscription();
       (config.subscriptionId, config.vrfCoordinatorV2_5) =
-        createSubscription.createSubscription(config.vrfCoordinatorV2_5);
+        createSubscription.createSubscription(config.vrfCoordinatorV2_5, helperConfig.getConfig().account);
 
       // fund subscription
       FundSubscription fundSubscription = new FundSubscription();
       fundSubscription.fundSubscription(
-          config.vrfCoordinatorV2_5, config.subscriptionId, config.link
+          config.vrfCoordinatorV2_5, config.subscriptionId, config.link, helperConfig.getConfig().account
       );
     }
 
-    vm.startBroadcast();
+    vm.startBroadcast(config.account);
     Raffle raffle = new Raffle(
       config.raffleEntranceFee,
       config.automationUpdateInterval,
@@ -38,7 +38,7 @@ contract DeployRaffle is Script {
     vm.stopBroadcast();
 
     AddConsumer addConsumer = new AddConsumer();
-    addConsumer.addConsumer(address(raffle), config.vrfCoordinatorV2_5, config.subscriptionId);
+    addConsumer.addConsumer(address(raffle), config.vrfCoordinatorV2_5, config.subscriptionId, helperConfig.getConfig().account);
 
     return (raffle, helperConfig);
   }
